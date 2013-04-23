@@ -102,8 +102,9 @@ func (l *Logger) Event(data interface{}) {
 	}
 	buf = append(buf, '\n')
 	l.mu.Lock()
-	// TODO config option to keep retrying until e.g. space is freed?
-	// see daemontools/svlogd for all the possible ugliness
+	// We ignore errors here. If you want to e.g. sleep and retry
+	// until disk space is freed, push that to a separate process
+	// or wrap the io.Writer. This will block until it can write.
 	_, _ = l.conf.Out.Write(buf)
 	defer l.mu.Unlock()
 }
