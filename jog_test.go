@@ -17,10 +17,10 @@ func TestExplicit(t *testing.T) {
 	// not buggy
 	buf := new(bytes.Buffer)
 	conf := Config{
-		Out:   buf,
-		Clock: FixedClock,
+		Out: buf,
 	}
 	log := New(&conf)
+	log.clock = FixedClock
 	type xyzzy struct {
 		Quux string
 		Thud int
@@ -36,10 +36,10 @@ func TestExplicit(t *testing.T) {
 func testEvent(t *testing.T, data interface{}, type_ string, want string) {
 	buf := new(bytes.Buffer)
 	conf := Config{
-		Out:   buf,
-		Clock: FixedClock,
+		Out: buf,
 	}
 	log := New(&conf)
+	log.clock = FixedClock
 	log.Event(data)
 	got := buf.String()
 	want = `{"Time":"` + FIXED_TIME + `","Type":"` + type_ + `","Data":` + want + `}` + "\n"

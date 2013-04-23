@@ -23,9 +23,6 @@ import (
 type Config struct {
 	// Destination to which log events will be written.
 	Out io.Writer
-
-	// This is mostly useful for unit tests.
-	Clock func() time.Time
 }
 
 func nowUTC() time.Time {
@@ -34,16 +31,15 @@ func nowUTC() time.Time {
 
 // New creates a new Logger. Configuration is optional.
 func New(conf *Config) *Logger {
-	l := &Logger{}
+	l := &Logger{
+		clock: nowUTC,
+	}
 	if conf != nil {
 		// Config is copied so callers can't mess things up.
 		l.conf = *conf
 	}
 	if l.conf.Out == nil {
 		l.conf.Out = os.Stdout
-	}
-	if l.conf.Clock == nil {
-		l.conf.Clock = nowUTC
 	}
 	return l
 }
@@ -57,6 +53,9 @@ func New(conf *Config) *Logger {
 type Logger struct {
 	// immutable for the lifetime of the logger
 	conf Config
+
+	// This is only intended for unit tests.
+	clock func() time.Time
 
 	// prevents interleaved writes
 	mu sync.Mutex
@@ -85,7 +84,7 @@ func (l *Logger) Event(data interface{}) {
 		panic("nil events are pointless")
 	}
 	event := header{
-		Time: l.conf.Clock(),
+		Time: l.clock(),
 	}
 	event.Set(data)
 	buf, err := json.Marshal(event)
