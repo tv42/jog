@@ -14,6 +14,11 @@ type stop struct {
 	Points float32
 }
 
+// Example output:
+//
+//     {"Time":"2013-04-23T20:51:17.632909Z","Type":"main#start","Data":{"Enthusiasm":"high"}}
+//     {"Time":"2013-04-23T20:51:17.633016Z","Type":"github.com/tv42/jog/example/greetings#greet","Data":{"Message":"Hello, world!","ID":"43235433"}}
+//     {"Time":"2013-04-23T20:51:17.633047Z","Type":"main#stop","Data":{"Style":"commendable","Points":9.7}}
 func main() {
 	log := jog.New(nil)
 	log.Event(start{Enthusiasm: "high"})
