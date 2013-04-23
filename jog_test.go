@@ -80,3 +80,18 @@ func TestNilPointer(t *testing.T) {
 	testEvent(t, &justMyPresence{},
 		"github.com/tv42/jog#justMyPresence", `{}`)
 }
+
+type extraNewlines struct {
+}
+
+func (extraNewlines) MarshalJSON() ([]byte, error) {
+	return []byte{'{', '\n', '}'}, nil
+}
+
+// We rely on encoding/json compacting custom MarshalJSON output, and
+// letting that guarantee there will be no extra newlines in the
+// output. Verify that assumption.
+func TestMarshalerNewline(t *testing.T) {
+	testEvent(t, extraNewlines{},
+		"github.com/tv42/jog#extraNewlines", `{}`)
+}
