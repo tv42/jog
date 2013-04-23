@@ -32,3 +32,8 @@ Usage:
 Define a new type for every type of event you emit. Don't reuse the
 same name within the package (Go helps you with this! They're already
 identifiers!).
+
+For more, see the API documentation at
+http://godoc.org/github.com/tv42/jog
+and the example code in
+https://github.com/tv42/jog/blob/master/example/hello.go
