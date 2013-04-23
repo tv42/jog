@@ -6,7 +6,8 @@ Jog is a simple, minimal, logging library for Go. It's meant for
 backend services that generate a lot of logs, where ease of processing
 is more important than human eyeball friendliness.
 
-- the right way is the easy way; event types are differentiate for you
+- the right way is the easy way; event types are differentiated for
+  you
 - log rotation, compression, and such belong outside the process
 - don't repeat identical values in every log message, e.g. hostname
   (these can be added at indexing time)
