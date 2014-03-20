@@ -64,7 +64,7 @@ type Logger struct {
 type header struct {
 	Time time.Time
 	Type string
-	Data interface{} `json:",omitempty"`
+	Data interface{}
 }
 
 func (h *header) Set(data interface{}) {
