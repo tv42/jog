@@ -76,9 +76,6 @@ func (h *header) Set(data interface{}) {
 
 // Record an event on this Logger. Data may be any value that can be
 // JSON encoded.
-//
-// Do not rely synchronicity of JSON encoding or output. These may
-// change.
 func (l *Logger) Event(data interface{}) {
 	if data == nil {
 		panic("nil events are pointless")
