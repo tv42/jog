@@ -1,9 +1,11 @@
-package jog
+package jog_test
 
 import (
 	"bytes"
 	"testing"
 	"time"
+
+	"github.com/tv42/jog"
 )
 
 func FixedClock() time.Time {
@@ -16,18 +18,18 @@ func TestExplicit(t *testing.T) {
 	// one test avoiding the formatting helpers, just to show they're
 	// not buggy
 	buf := new(bytes.Buffer)
-	conf := Config{
+	conf := jog.Config{
 		Out: buf,
 	}
-	log := New(&conf)
-	log.clock = FixedClock
+	log := jog.New(&conf)
+	log.SetClock(FixedClock)
 	type xyzzy struct {
 		Quux string
 		Thud int
 	}
 	log.Event(xyzzy{Quux: "foo", Thud: 42})
 	got := buf.String()
-	want := `{"Time":"` + FIXED_TIME + `","Type":"github.com/tv42/jog#xyzzy","Data":{"Quux":"foo","Thud":42}}` + "\n"
+	want := `{"Time":"` + FIXED_TIME + `","Type":"github.com/tv42/jog_test#xyzzy","Data":{"Quux":"foo","Thud":42}}` + "\n"
 	if got != want {
 		t.Errorf("wrong output: %q != %s", got, want)
 	}
@@ -35,16 +37,16 @@ func TestExplicit(t *testing.T) {
 
 func testEvent(t *testing.T, data interface{}, type_ string, want string) {
 	buf := new(bytes.Buffer)
-	conf := Config{
+	conf := jog.Config{
 		Out: buf,
 	}
-	log := New(&conf)
-	log.clock = FixedClock
+	log := jog.New(&conf)
+	log.SetClock(FixedClock)
 	log.Event(data)
 	got := buf.String()
 	want = `{"Time":"` + FIXED_TIME + `","Type":"` + type_ + `","Data":` + want + `}` + "\n"
 	if got != want {
-		t.Errorf("wrong output: %q != %s", got, want)
+		t.Errorf("wrong output: %q != %q", got, want)
 	}
 }
 
@@ -54,7 +56,7 @@ func TestSimple(t *testing.T) {
 		Thud int
 	}
 	testEvent(t, frob{Quux: "foo", Thud: 42},
-		"github.com/tv42/jog#frob", `{"Quux":"foo","Thud":42}`)
+		"github.com/tv42/jog_test#frob", `{"Quux":"foo","Thud":42}`)
 }
 
 func TestPointer(t *testing.T) {
@@ -63,14 +65,14 @@ func TestPointer(t *testing.T) {
 		Thud int
 	}
 	testEvent(t, &frob{Quux: "foo", Thud: 42},
-		"github.com/tv42/jog#frob", `{"Quux":"foo","Thud":42}`)
+		"github.com/tv42/jog_test#frob", `{"Quux":"foo","Thud":42}`)
 }
 
 func TestEmpty(t *testing.T) {
 	type justMyPresence struct {
 	}
 	testEvent(t, justMyPresence{},
-		"github.com/tv42/jog#justMyPresence", `{}`)
+		"github.com/tv42/jog_test#justMyPresence", `{}`)
 }
 
 func TestNilPointer(t *testing.T) {
@@ -78,7 +80,7 @@ func TestNilPointer(t *testing.T) {
 	type justMyPresence struct {
 	}
 	testEvent(t, &justMyPresence{},
-		"github.com/tv42/jog#justMyPresence", `{}`)
+		"github.com/tv42/jog_test#justMyPresence", `{}`)
 }
 
 type extraNewlines struct {
@@ -93,5 +95,5 @@ func (extraNewlines) MarshalJSON() ([]byte, error) {
 // output. Verify that assumption.
 func TestMarshalerNewline(t *testing.T) {
 	testEvent(t, extraNewlines{},
-		"github.com/tv42/jog#extraNewlines", `{}`)
+		"github.com/tv42/jog_test#extraNewlines", `{}`)
 }
